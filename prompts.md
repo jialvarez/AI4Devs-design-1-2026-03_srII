@@ -49,3 +49,9 @@ Finalmente, genera la documentación técnica profunda siguiendo el estándar C4
 ## PROMPT 2 
 
 Más allá de las clases core, me puedes dar el nivel 4 del resto de entidades?
+
+## PROMPT 3
+
+CAMBIO A DEEPSEEK, GEMINI EN BUCLE DANDO RESPUESTAS DE MALA CALIDAD.
+
+¿Cómo mejorarías esta especificación?
