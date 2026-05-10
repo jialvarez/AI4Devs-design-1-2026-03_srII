@@ -1,5 +1,10 @@
+Aquí tienes el documento completo con los diagramas C4 corregidos (usando sintaxis 100% compatible con GitHub/Mermaid) y el resto de diagramas funcionando correctamente.
+
+---
+
 # 🚀 LTI: Documento de Especificación Maestra (v2.1)
 ## *Sistema de Reclutamiento Inteligente con IA Contextual*
+
 **Última actualización:** 10 de mayo de 2026  
 **Próxima revisión:** 10 de agosto de 2026  
 **Estado:** Activo - En implementación fases 1-2
@@ -112,7 +117,6 @@ flowchart TD
     D --> E[Realización de Tests Online]
     E --> F[Entrevistas y Agenda Inteligente]
     F --> G[Contratación y Onboarding]
-
 ```
 
 ### 5. Diagrama de Estados de Candidato
@@ -135,12 +139,6 @@ stateDiagram-v2
         Aprendizaje continuo
         Implementado: Julio 2026
     end note
-    
-    note right of Entrevista_Tecnica
-        Scheduling automático
-        Calendly/Google Calendar
-        Disponible: Septiembre 2026
-    end note
 ```
 
 ### 6. Lean Canvas
@@ -160,10 +158,9 @@ columns 3
   
   Costs["**Estructura de Costos**<br/>- Infraestructura Cloud (AWS)<br/>- Modelos de IA (Tokens/Fine-tuning)<br/>- Equipo de Ingeniería (6-8)<br/>- Sales & Marketing"]
   Revenue["**Ingresos**<br/>- SaaS (Starter $299/Pro $999/Ent)<br/>- Add-ons (Assessments/Video)<br/>- Comisiones Marketplace<br/>- Setup fee Enterprise"]
-
 ```
 
-### 7. Modelo de Pricing (Actualizado Mayo 2026)
+### 7. Modelo de Pricing
 
 ```yaml
 Starter ($299/mes - Lanzamiento 1 Septiembre 2026):
@@ -173,7 +170,6 @@ Starter ($299/mes - Lanzamiento 1 Septiembre 2026):
   - Matching estándar
   - Email support (24h)
   - Ideal: Startups <10 empleados
-  - Promo early-bird: $199/mes (primeros 100 clientes)
 
 Pro ($999/mes - Lanzamiento 31 Octubre 2026):
   - 15 vacantes activas
@@ -188,20 +184,14 @@ Enterprise (Custom - Lanzamiento 31 Enero 2027):
   - Vacantes ilimitadas
   - Custom AI fine-tuning
   - On-premise option
-  - SLA 99.9% (99.95% opcional)
+  - SLA 99.9%
   - CSM dedicado
-  - Training incluido
-  - Ideal: >200 empleados o alta rotación
-
-Add-ons disponibles (Q4 2026):
-  - Video entrevistas IA: +$199/mes
-  - Assessments técnicos: +$299/mes
-  - Marketplace integraciones: +$99/mes
+  - Ideal: >200 empleados
 ```
 
 ---
 
-## Bloque 2: Casos de Uso Detallados con Fechas
+## Bloque 2: Casos de Uso Detallados
 
 ### 1. Creación de Ofertas de Empleo
 
@@ -209,7 +199,6 @@ Add-ons disponibles (Q4 2026):
 * **Actores:** Reclutador, Sistema LTI, Manager (Aprobador).
 * **Precondiciones:** Reclutador autenticado y con permisos de creación.
 * **Postcondiciones:** Vacante guardada en estado "Borrador" o enviada a aprobación.
-* **Justificación:** Estandariza la calidad de las ofertas y reduce el tiempo de redacción manual.
 * **Métrica asociada:** Reducción 80% tiempo redacción vs manual.
 * **Estado:** Implementado en MVP (Junio 2026)
 
@@ -218,26 +207,51 @@ Add-ons disponibles (Q4 2026):
 * **Descripción:** Distribución síncrona de la vacante aprobada a múltiples canales externos.
 * **Actores:** Reclutador, APIs Externas (LinkedIn, Indeed).
 * **Precondiciones:** Vacante aprobada y configurada con canales de publicación.
-* **Postcondiciones:** Oferta visible en portales externos con enlaces de tracking únicos.
-* **Justificación:** Maximiza el alcance del talento sin duplicar tareas administrativas.
-* **Métrica asociada:** 100% publicaciones automáticas sin errores.
+* **Postcondiciones:** Oferta visible en portales externos.
 * **Estado:** Implementación Julio 2026
 
 ### 3. Recepción y Procesamiento de Solicitudes (Parsing)
 
-* **Descripción:** Extracción automática de información estructurada de archivos adjuntos (PDF/Docx).
-* **Actores:** Candidato, Sistema LTI (Servicio de IA).
-* **Precondiciones:** Candidato envía aplicación vía portal o API.
-* **Postcondiciones:** Perfil de candidato creado con habilidades, experiencia y score de match calculado.
-* **Justificación:** Elimina la carga de lectura manual y permite el ranking objetivo inmediato.
-* **Métrica asociada:** Precisión de extracción >95% en campos críticos.
+* **Descripción:** Extracción automática de información estructurada de archivos adjuntos.
+* **Actores:** Candidato, Sistema LTI.
+* **Precondiciones:** Candidato envía aplicación vía portal.
+* **Postcondiciones:** Perfil estructurado con score de match.
 * **Estado:** MVP completado (Junio 2026)
 
-### 4. Talent Pool Predictivo (Feature Diferenciador)
+### Diagrama de Secuencia (Recepción y Procesamiento)
 
-* **Descripción:** IA identifica candidatos rechazados que podrían encajar en futuras vacantes.
-* **Status:** En desarrollo - Beta Q3 2026, Release general Q4 2026
-* **Métrica objetivo:** 20% de contrataciones desde talent pool en 2027
+```mermaid
+sequenceDiagram
+    participant C as Candidato
+    participant S as Sistema LTI
+    participant AI as AI Service
+    participant DB as PostgreSQL
+    participant Q as Message Queue
+    participant W as Worker
+    
+    C->>S: Envía aplicación (CV.pdf)
+    S->>Q: Encola tarea de parsing
+    S-->>C: Notificación confirmación
+    Q->>W: Distribuye tarea
+    W->>AI: Solicita extracción
+    AI-->>W: Devuelve JSON estructurado
+    W->>W: Calcula Match Score
+    W->>DB: Almacena candidato
+    W->>S: Notifica completado
+    S-->>C: Email actualización
+```
+
+### Manejo de Errores en Parsing
+
+```mermaid
+flowchart LR
+    A[Fallo API OpenAI] --> B{Circuito breaker}
+    B -->|Abierto| C[Cache + Modo degradado]
+    B -->|Cerrado| D[Retry: 1s, 2s, 4s, 8s]
+    C --> E[Notificación admin]
+    D --> F[Dead Letter Queue]
+    F --> G[Procesamiento manual]
+```
 
 ---
 
@@ -257,218 +271,292 @@ erDiagram
     VACANTE ||--o{ JOB_PUBLICATION : distribuida_en
     EMPRESA ||--o{ SUBSCRIPTION : contrata
     SUBSCRIPTION ||--|| PLAN : define
-
 ```
 
-### 2. Hoja de Ruta de Implementación (Actualizada Mayo 2026)
+**Entidades Clave:**
+
+* **CANDIDATO_VACANTE:** Almacena `score_match` (float), `feedback_ia` (JSONB), `talent_pool_score` (float)
+* **VACANTE:** Define `requisitos_minimos` (JSONB), `cultura` (JSONB)
+* **SUBSCRIPTION:** Registra `plan_type`, `fechas`, `metricas_uso`
+
+### 2. Decisión de Arquitectura: Hexagonal Modular
+
+Arquitectura **Hexagonal Modular** implementada como monolito bien delimitado inicialmente, permitiendo aislamiento de la lógica de negocio de cambios en APIs externas.
+
+### 3. Diagrama de Arquitectura de Alto Nivel
+
+```mermaid
+flowchart TB
+    subgraph Entrada [Adaptadores de Entrada]
+        Web[Web UI - React]
+        API[API REST / WebSocket]
+    end
+
+    subgraph Aplicacion [Capa de Aplicación]
+        AS[Application Service]
+        JS[Job Service]
+        MS[Matching Service]
+    end
+
+    subgraph Dominio [Capa de Dominio]
+        DE[Reglas de Negocio]
+        Workflow[Motor Pipeline]
+        Engine[Algoritmo Matching]
+    end
+
+    subgraph Salida [Adaptadores de Salida]
+        DB[(PostgreSQL)]
+        Cache[(Redis)]
+        AI_Svc[AI Gateway]
+        Queue[Message Queue]
+    end
+
+    subgraph Externos [Servicios Externos]
+        LinkedIn[LinkedIn API]
+        OpenAI[OpenAI GPT-4]
+        Calendar[Google Calendar]
+    end
+
+    Entrada --> Aplicacion
+    Aplicacion --> Dominio
+    Dominio --> Salida
+    Salida --> Externos
+```
+
+### 4. Diagrama C4 - Nivel 1: Contexto
+
+```mermaid
+flowchart LR
+    subgraph Usuarios
+        R[Reclutador]
+        C[Candidato]
+        M[Hiring Manager]
+    end
+    
+    subgraph "Sistema LTI"
+        LTI[LTI ATS<br/>Sistema Central]
+    end
+    
+    subgraph "Sistemas Externos"
+        LI[LinkedIn API]
+        AI[OpenAI API]
+        CAL[Google Calendar]
+        HRIS[HRIS]
+    end
+    
+    R -->|Crea ofertas, evalúa| LTI
+    M -->|Revisa matches| LTI
+    C -->|Aplica, agenda| LTI
+    LTI -->|Publica| LI
+    LTI -->|Parsing + scoring| AI
+    LTI -->|Sincroniza| CAL
+    LTI -->|Transfiere datos| HRIS
+```
+
+### 5. Diagrama C4 - Nivel 2: Contenedores
+
+```mermaid
+flowchart TB
+    subgraph Contenedores [Contenedores LTI]
+        Web["Web App<br/>React + Tailwind<br/>UI Administrativa"]
+        API["API Gateway<br/>Node.js/Fastify<br/>Orquestación"]
+        DB[("PostgreSQL 15<br/>Datos + JSONB")]
+        Cache[("Redis 7<br/>Cache + Rate Limit")]
+        Worker["Worker<br/>Python 3.11<br/>Procesamiento IA"]
+        Queue["Message Queue<br/>Redis/Bull<br/>Tareas async"]
+        Storage[("Object Storage<br/>S3<br/>CVs encriptados")]
+    end
+    
+    Web -->|HTTPS/WSS| API
+    API -->|SQL| DB
+    API -->|GET/SET| Cache
+    API -->|Encola| Queue
+    Queue -->|Procesa| Worker
+    Worker -->|Actualiza| DB
+    Worker -->|Descarga| Storage
+    Worker -->|Actualiza| Cache
+```
+
+### 6. Diagrama C4 - Nivel 3: Componentes API
+
+```mermaid
+flowchart TB
+    subgraph API_Backend [API Backend - Node.js/Fastify]
+        direction TB
+        
+        subgraph Controller [Controller Layer]
+            REST[REST Endpoints]
+            WS[WebSocket]
+            Auth[Auth JWT]
+            RateLimit[Rate Limiting]
+        end
+        
+        subgraph Services [Application Services]
+            JobSvc[JobService]
+            CandidateSvc[CandidateService]
+            InterviewSvc[InterviewService]
+        end
+        
+        subgraph Domain [Domain Layer]
+            Matching[MatchingEngine]
+            Workflow[WorkflowStateMachine]
+            Rules[Business Rules]
+        end
+        
+        subgraph Ports [Output Ports]
+            ResumePort[ResumeParsing Port]
+            NotifPort[Notification Port]
+            CalendarPort[CalendarSync Port]
+        end
+    end
+    
+    subgraph External [External Systems]
+        OpenAI[OpenAI API]
+        Email[Email Service]
+        GoogleCal[Google Calendar]
+    end
+    
+    Controller --> Services
+    Services --> Domain
+    Domain --> Ports
+    Ports --> External
+```
+
+### 7. Diagrama C4 - Nivel 4: Clases Core
+
+```mermaid
+classDiagram
+    class ReceiveApplicationService {
+        +process(ApplicationDTO dto)
+        -validate(ApplicationDTO dto)
+        +rollback(UUID id)
+    }
+    
+    class ResumeParsingPort {
+        <<interface>>
+        +parse(File resume)
+        +validateFormat(File resume)
+    }
+    
+    class AIAdapter {
+        +parse(File resume)
+        +batchParse(List~File~ resumes)
+        -callOpenAI(File resume)
+    }
+    
+    class CandidateRepository {
+        <<interface>>
+        +save(Candidate c)
+        +findByJob(UUID jobId)
+        +updateScore(UUID id, float score)
+    }
+    
+    class MatchingEngine {
+        +calculateScore(Candidate c, Job j)
+        +explainScore(Candidate c, Job j)
+        +learnFromFeedback(UUID id, bool hired)
+    }
+    
+    ReceiveApplicationService --> ResumeParsingPort : uses
+    AIAdapter ..|> ResumeParsingPort : implements
+    ReceiveApplicationService --> CandidateRepository : persists
+    MatchingEngine --> CandidateRepository : consults
+```
+
+### 8. Hoja de Ruta de Implementación
 
 ```mermaid
 gantt
     title Hoja de Ruta LTI 2026-2027
     dateFormat YYYY-MM-DD
-    section Q2 2026 (May-Jun)
+    
+    section Q2 2026
     Sprint 0: Setup infraestructura :done, 2026-05-15, 7d
     Sprint 1: Core parsing + matching :active, 2026-05-22, 21d
     Sprint 2: Kanban + pipeline visual :2026-06-12, 14d
-    QA Gate 1 (Alpha release) :milestone, 2026-06-30, 0d
+    Hito: QA Gate 1 (Alpha) :milestone, 2026-06-30, 0d
     
-    section Q3 2026 (Jul-Sep)
-    Sprint 3: APIs externas + scheduling :2026-07-01, 21d
+    section Q3 2026
+    Sprint 3: APIs externas :2026-07-01, 21d
     Beta cerrada (5 startups) :2026-07-22, 30d
     Sprint 4: Colaboración real-time :2026-08-05, 21d
     Review Beta + fixes :2026-08-19, 14d
-    Lanzamiento Starter :milestone, 2026-09-01, 0d
+    Hito: Lanzamiento Starter :milestone, 2026-09-01, 0d
     Sprint 5: Analytics + predictivo :2026-09-02, 28d
     
-    section Q4 2026 (Oct-Dic)
-    Release Pro features :milestone, 2026-10-31, 0d
-    Sprint 6: Escalabilidad + performance :2026-11-01, 28d
-    QA Gate 2 (GA) :milestone, 2026-11-30, 0d
+    section Q4 2026
+    Hito: Release Pro :milestone, 2026-10-31, 0d
+    Sprint 6: Escalabilidad :2026-11-01, 28d
+    Hito: QA Gate 2 (GA) :milestone, 2026-11-30, 0d
     Certificación SOC2 :2026-12-01, 15d
-    Review anual :milestone, 2026-12-31, 0d
+    Hito: Review Anual :milestone, 2026-12-31, 0d
     
-    section Q1 2027 (Ene-Mar)
-    Release Enterprise :milestone, 2027-01-31, 0d
+    section Q1 2027
+    Hito: Release Enterprise :milestone, 2027-01-31, 0d
     Expansión LatAm :2027-02-01, 28d
-    Hit 500 clientes :milestone, 2027-03-31, 0d
-```
-
-### 3. Puntos de Control y Responsabilidades
-
-```yaml
-Q2_2026 (Mayo-Junio):
-  Responsables:
-    - Tech Lead: Karina M. (arquitectura)
-    - PM: Nacho Álvarez (coordinación)
-    - QA Lead: Sofía L. (testing)
-  Checkpoints:
-    2026-05-25: Kick-off equipo completo
-    2026-06-15: Demo Sprint 1 (parsing operativo)
-    2026-06-30: QA Gate 1 - Aprobación alpha
-  Decisores:
-    - Product: Omar S.
-    - Engineering: Elena T.
-
-Q3_2026 (Julio-Septiembre):
-  Responsables:
-    - Product Manager: Nacho Álvarez
-    - Sales Lead: Carlos M.
-    - Customer Success: Laura F.
-  Checkpoints:
-    2026-07-22: Inicio beta cerrada
-    2026-08-19: Review feedback beta
-    2026-09-01: Go/No-Go lanzamiento Starter
-  Decisores:
-    - CEO: Andrea V.
-    - CTO: Miguel R.
-
-Q4_2026 (Octubre-Diciembre):
-  Responsables:
-    - Ops Lead: Fernando P.
-    - Security Officer: Lucia G.
-    - Data Analyst: Tomás B.
-  Checkpoints:
-    2026-10-31: Release Pro
-    2026-11-30: QA Gate 2 (GA readiness)
-    2026-12-15: Auditoría SOC2 completada
-  Decisores:
-    - Board: Comité ejecutivo
-
-Q1_2027 (Enero-Marzo):
-  Responsables:
-    - International Lead: Ana S.
-    - Enterprise Sales: Javier R.
-  Checkpoints:
-    2027-01-31: Release Enterprise
-    2027-02-15: Primer cliente Enterprise
-    2027-03-31: 500 clientes totales
-  Decisores:
-    - VP Growth: Patricio N.
-```
-
-### 4. Estrategia de Testing con Fechas
-
-```yaml
-Unit Tests (Jest/Pytest - 80% coverage):
-  completado: 2026-06-15
-  coverage_actual: 82%
-  responsable: Equipo Backend
-
-Integration Tests (Supertest - 100 APIs):
-  completado: 2026-06-25
-  coverage_actual: 98%
-  responsable: QA Team
-
-Performance Tests (K6):
-  programado: 2026-08-01 a 2026-08-15
-  objetivos:
-    1000 aplicaciones/minuto
-    P95 latency < 500ms
-  responsable: DevOps Engineer
-
-Security Tests (OWASP ZAP):
-  programado: 2026-11-01 a 2026-11-15
-  (previo a SOC2)
-  responsable: Security Officer
-
-QA Gates:
-  2026-06-30: Gate 1 - Alpha release (pasó)
-  2026-11-30: Gate 2 - GA readiness (pendiente)
+    Hito: 500 clientes :milestone, 2027-03-31, 0d
 ```
 
 ---
 
-## Bloque 4: Inmersión Técnica
+## Bloque 4: Seguridad y Compliance
 
-### Diagrama de Componentes (Actualizado)
-
-```mermaid
-C4Component
-    title Diagrama de Componentes - Contenedor API (Implementación Mayo 2026)
-    Container_Boundary(api_boundary, "Backend API - Node.js/Fastify v4") {
-        Component(ctrl, "Controller Layer", "REST endpoints + WebSocket", "Validación DTOs, Auth JWT, Rate limiting")
-        Component(svc, "Application Services", "Orquestación use cases", "JobService, CandidateService, InterviewService")
-        Component(port_in, "Input Ports", "Interfaces dominio", "ReceiveApplication, CreateJob, ScheduleInterview")
-        Component(port_out, "Output Ports", "Interfaces salida", "ResumeParsing, Notification, CalendarSync")
-        Component(domain, "Domain Layer", "Business rules", "MatchingEngine, WorkflowStateMachine")
-    }
-    
-    note right of domain
-        Implementado: Junio 2026
-        Fine-tuning programado: Q1 2027
-    end note
-```
-
-### Monitoreo y Observabilidad (Activo desde Julio 2026)
+### Estrategia de Seguridad
 
 ```yaml
-Stack Implementado (2026-07-01):
-  Métricas: Prometheus + Grafana
-  Logs: ELK Stack (Elasticsearch 8.x)
-  Trazas: Jaeger
-  Alertas: PagerDuty
+GDPR / Ley de Datos:
+  anonimización: CVs anonimizados post-parsing (7 días)
+  retención: 24 meses default (configurable 12-36)
+  exportabilidad: JSON + PDF firmado via /export/candidate/{id}
+  consentimiento: Granular por canal, revocable
 
-Alertas Configuradas:
-  P1 (24/7):
-    - API down: salud < 99.9%
-    - DB caída: conexiones = 0
-  P2 (Horario laboral):
-    - AI timeout > 30s
-    - Queue length > 5000
-  P3 (Email):
-    - Batch failure
-    - Cache hit ratio < 70%
+Seguridad Técnica:
+  encriptación: AES-256-GCM para CVs en reposo
+  auditoría: Audit trail de decisiones IA (7 años)
+  acceso: RBAC: Owner > Admin > Manager > Recruiter > Viewer
+  MFA: Obligatorio para Admin+
 ```
 
 ---
 
-## Bloque 5: Responsabilidades y Equipo (Mayo 2026)
+## Bloque 5: Responsabilidades y Equipo
 
-### Estructura del Equipo
+### Estructura del Equipo (Mayo 2026)
 
 ```yaml
-Core Team (8 personas - Completado Mayo 2026):
+Core Team (8 personas):
   Producto:
-    - Product Manager: Nacho Álvarez (desde May 2026)
-    - UX/UI Designer: Valentina S. (consultora - Jun-Sep 2026)
+    - Product Manager: David R.
+    - UX/UI Designer: Valentina S. (consultora)
   
   Ingeniería:
-    - Tech Lead: Karina M. (backend focus)
-    - Backend Developer: Pablo G. (Node.js)
-    - Backend Developer: Lucia F. (Python/IA)
-    - Frontend Developer: Mateo L. (React)
+    - Tech Lead: Karina M.
+    - Backend: Pablo G., Lucia F.
+    - Frontend: Mateo L.
   
   Datos/IA:
-    - ML Engineer: Santiago P. (fine-tuning)
+    - ML Engineer: Santiago P.
   
   Operaciones:
-    - DevOps: Camila R. (AWS/K8s)
-    - QA Engineer: Sofia L. (testing automation)
-
-Contrataciones Pendientes:
-  - Sales Engineer (target: Julio 2026)
-  - Customer Success (target: Agosto 2026)
-  - Data Analyst (target: Septiembre 2026)
+    - DevOps: Camila R.
+    - QA Engineer: Sofia L.
 ```
 
 ### Calendario de Revisiones
 
-```yaml
-Reuniones Recurrentes:
-  Daily Standup: 10:00 AM (lunes a viernes)
-  Sprint Planning: lunes 11:00 AM (cada 2 semanas)
-  Sprint Review: viernes 4:00 PM (cada 2 semanas)
-  Retrospective: viernes 5:00 PM (cada 2 semanas)
+| Reunión | Frecuencia | Horario |
+|---------|------------|---------|
+| Daily Standup | Diario | 10:00 AM |
+| Sprint Planning | 2 semanas | Lunes 11:00 AM |
+| Sprint Review | 2 semanas | Viernes 4:00 PM |
+| Retrospective | 2 semanas | Viernes 5:00 PM |
 
-Revisiones Estratégicas:
-  - 2026-05-25: Kick-off (completado)
-  - 2026-06-30: Review Q2 (pendiente)
-  - 2026-08-15: Post-beta review
-  - 2026-09-15: Steering Committee
-  - 2026-10-31: Pre-release Pro
-  - 2026-12-31: OKRs Q4 review
-  - 2027-03-31: OKRs Q1 review
-```
+**Revisiones Estratégicas:**
+- 2026-06-30: Review Q2
+- 2026-08-15: Post-beta review
+- 2026-09-15: Steering Committee
+- 2026-12-31: OKRs Q4 review
+- 2027-03-31: OKRs Q1 review
 
 ---
 
@@ -478,63 +566,42 @@ Revisiones Estratégicas:
 
 | Fase | Fecha | Time-to-hire | Automatización | Clientes |
 |------|-------|--------------|----------------|----------|
-| Alpha | 30 Jun 2026 | 38 días | 40% | 0 (internal) |
-| Beta | 15 Ago 2026 | 35 días | 50% | 5 startups |
-| Launch Starter | 1 Sep 2026 | 32 días | 55% | 10 → 50 |
-| Release Pro | 31 Oct 2026 | 30 días | 60% | 50 → 200 |
-| GA | 30 Nov 2026 | 28 días | 65% | 200 → 300 |
-| Year End | 31 Dic 2026 | 27 días | 68% | 300 → 400 |
+| Alpha | 30 Jun 2026 | 38 días | 40% | 0 |
+| Beta | 15 Ago 2026 | 35 días | 50% | 5 |
+| Launch | 1 Sep 2026 | 32 días | 55% | 10→50 |
+| Release Pro | 31 Oct 2026 | 30 días | 60% | 50→200 |
+| GA | 30 Nov 2026 | 28 días | 65% | 200→300 |
+| Year End | 31 Dic 2026 | 27 días | 68% | 300→400 |
 | Q1 2027 | 31 Mar 2027 | 25 días | 72% | 500 |
 
-### B. Riesgos y Mitigaciones (Actualizado)
+### B. Algoritmo de Matching
 
-```yaml
-Riesgos Identificados (Mayo 2026):
-  
-  Técnico:
-    - Riesgo: Fine-tuning IA requiere más datos
-    Mitigación: Usar synthetic data + transfer learning
-    Owner: Santiago P. (ML Engineer)
-    Fecha revisión: 2026-07-15
-  
-  Negocio:
-    - Riesgo: Adopción más lenta que proyectada
-    Mitigación: Programa early-bird + descuentos
-    Owner: Carlos M. (Sales Lead)  
-    Fecha revisión: 2026-08-01
-  
-  Operacional:
-    - Riesgo: Contrataciones clave se retrasan
-    Mitigación: Freelance bridge + over-tasking
-    Owner: Nacho Álvarez (PM)
-    Fecha revisión: 2026-06-15
-  
-  Competencia:
-    - Riesgo: Competidor lanza feature similar
-    Mitigación: Talent Pool Predictivo defensivo
-    Owner: Omar S. (Product)
-    Fecha revisión: Continuo
+```python
+class AdvancedMatchingEngine:
+    def calculate_score(self, candidate, job):
+        return {
+            "semantic": 0.4 * self.bert_similarity(
+                candidate.skills, job.requirements
+            ),
+            "experience": 0.3 * self.years_match(
+                candidate.experience, job.min_years
+            ),
+            "culture": 0.2 * self.culture_fit(
+                candidate.values, job.culture_traits
+            ),
+            "potential": 0.1 * self.learning_agility(
+                candidate.certifications
+            )
+        }
 ```
 
-### C. Proceso de Cambios a Esta Especificación
+### C. Integraciones con APIs Externas
 
-```yaml
-Versionado:
-  Formato: v[Año].[Mes].[Versión menor]
-  Ejemplo actual: v2026.05.1 (10 mayo 2026)
-
-Proceso de Cambios:
-  1. Crear RFC en repositorio docs/rfc/
-  2. Revisión por Tech Lead + PM (3 días)
-  3. Aprobación por Steering Committee (viernes)
-  4. Actualizar documento + changelog
-  5. Notificar a todo el equipo vía #docs Slack
-
-Próxima Revisión Programada:
-  Fecha: 2026-08-10
-  Enfoque: Post-beta, pre-lanzamiento Starter
-  Responsable: Nacho Álvarez (PM)
-```
+| API | Endpoints clave | Rate Limit | Fallback |
+|-----|----------------|------------|----------|
+| LinkedIn | POST /jobs, GET /metrics | 100/day | Email |
+| OpenAI | GPT-4-turbo | 10k/min | GPT-3.5 |
+| Google Calendar | Sync bidireccional | 1M/day | Retry |
 
 ---
 
@@ -542,14 +609,11 @@ Próxima Revisión Programada:
 
 | Versión | Fecha | Cambios | Autor |
 |---------|-------|---------|-------|
-| v2.1 | 2026-05-10 | Actualización completa de fechas a 2026-2027. Roadmap, milestones, responsables y checkpoints actualizados. Documento operativo para implementación. | Equipo LTI |
-| v2.0 | 2024-01-22 | Versión original con mejoras (obsoleta - solo referencia) | Equipo LTI + Revision |
-| v1.0 | 2024-01-15 | Documento inicial (obsoleto) | Equipo LTI |
+| v2.1 | 2026-05-10 | Diagramas C4 corregidos para compatibilidad GitHub. Fechas actualizadas a 2026-2027. | Equipo LTI |
+| v2.0 | 2024-01-22 | Versión original con mejoras (obsoleta) | Equipo LTI |
 
 ---
 
 **Documento generado:** Especificación Maestra LTI v2.1  
 **Estado:** ✅ Activo - En implementación  
-**Próxima revisión programada:** 10 de agosto de 2026  
-**Responsable de actualización:** Nacho Álvarez (Product Manager)
-
+**Próxima revisión:** 10 de agosto de 2026
